@@ -51,17 +51,16 @@ class NewController extends \In2code\Femanager\Controller\NewController
     /**
      * Render registration form
      *
-     * @param User|\In2code\Femanager\Domain\Model\User $user
      * @return ResponseInterface
      */
-    public function newAction(\In2code\Femanager\Domain\Model\User $user = null): ResponseInterface
+    public function newAction(): ResponseInterface
     {
         //get kitodo ID if set
         $kitodoParams = GeneralUtility::_GET('tx_dlf');
         $this->view->assign('kitodoParams', $kitodoParams);
 
         $this->view->assign('currentUser', $this->user);
-        return parent::newAction($user);
+        return parent::newAction();
     }
 
     /**
