@@ -48,22 +48,22 @@ class ExtendController extends AbstractController
     public function dialogAction()
     {
         //get kitodo parameters
-        $kitodoParams = GeneralUtility::_GET('tx_dlf');
+        $kitodoParams = $this->getSafelyParameters('tx_dlf');
 
-        //get femanager paramters
-        $femanagerParams = GeneralUtility::_GET('tx_femanager_pi1');
+        //get femanager parameters
+        $feManagerParams = $this->getSafelyParameters('tx_femanager_pi1');
 
         //check if user is logged in
         $user = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'id', 0) > 0;
 
         //check if fe_user exists AND action is create --> redirect
-        if ($user && $femanagerParams['action'] === 'create') {
+        if ($user && $feManagerParams['action'] === 'create') {
             //remove all femanager flashMessages concerning profile create / login
             $this->controllerContext->getFlashMessageQueue('extbase.flashmessages.tx_femanager_pi1')->getAllMessagesAndFlush();
             //redirect
             $this->redirectToKitodoView(['tx_dlf' => $kitodoParams]);
         }
-        elseif ($femanagerParams['action'] === 'create') {
+        elseif ($feManagerParams['action'] === 'create') {
             $this->view->assign('checkYes', true);
         }
 
@@ -73,7 +73,7 @@ class ExtendController extends AbstractController
             $this->view->assign('hideDialog', true);
             return;
         }
-   
+
         //get request arguments
         $arguments = $this->request->getArguments();
 
@@ -179,5 +179,18 @@ class ExtendController extends AbstractController
                 $this->redirectToUri($uri, null, 404);
             }
         }
+    }
+
+    /**
+     * Get parameters from GET array safely
+     *
+     * @param string $parameterName name of the parameter in GET array
+     *
+     * @return array
+     */
+    private function getSafelyParameters(string $parameterName): array
+    {
+        $parameters = GeneralUtility::_GET($parameterName);
+        return is_array($parameters) ? $parameters : [];
     }
 }
